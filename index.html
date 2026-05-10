@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Luyện tập tiếng Anh</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563EB;
+            --primary-hover: #1d4ed8;
+            --success: #58cc02;
+            --success-light: #d7ffb8;
+            --danger: #ff4b4b;
+            --danger-light: #ffdfe0;
+            --bg-color: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Nunito', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 430px;
+            /* iPhone Max */
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        /* Buttons */
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: 52px;
+            padding: 12px 20px;
+            border-radius: 16px;
+            border: 2px solid var(--border-color);
+            background-color: white;
+            color: var(--text-main);
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 12px;
+            text-align: left;
+            position: relative;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            border-bottom-width: 4px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .btn-primary:active {
+            transform: translateY(2px);
+            border-bottom-width: 2px;
+        }
+
+        .btn-option {
+            justify-content: flex-start;
+            border-bottom-width: 4px;
+            font-size: 16px;
+            padding-left: 16px;
+        }
+
+        .btn-option .option-label {
+            font-weight: 800;
+            margin-right: 12px;
+            color: var(--text-muted);
+            width: 24px;
+            text-align: center;
+        }
+
+        .btn-option:active {
+            background-color: #f3f4f6;
+        }
+
+        .btn-option.correct {
+            background-color: var(--success-light);
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .btn-option.correct .option-label {
+            color: var(--success);
+        }
+
+        .btn-option.incorrect {
+            background-color: var(--danger-light);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .btn-option.incorrect .option-label {
+            color: var(--danger);
+        }
+
+        /* Inputs */
+        input[type="text"],
+        .custom-select {
+            width: 100%;
+            min-height: 52px;
+            padding: 12px 20px;
+            border-radius: 16px;
+            border: 2px solid var(--border-color);
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            outline: none;
+            transition: border-color 0.2s;
+            appearance: none;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary);
+        }
+
+        /* Custom Dropdown */
+        .custom-select-wrapper {
+            position: relative;
+            width: 100%;
+            margin-bottom: 24px;
+        }
+
+        .custom-select {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0; /* Override */
+        }
+
+        .custom-select:hover {
+            border-color: var(--border-color);
+        }
+
+        .custom-options {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            width: 100%;
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            display: none;
+            z-index: 20;
+            box-shadow: var(--shadow-md);
+        }
+
+        .custom-select-wrapper.active .custom-options {
+            display: block;
+            border-color: var(--primary);
+        }
+
+        .custom-select-wrapper.active .custom-select {
+            border-color: var(--primary);
+        }
+
+        .custom-option {
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .custom-option:last-child {
+            border-bottom: none;
+        }
+
+        .custom-option:hover {
+            background-color: #f3f4f6;
+        }
+
+        .custom-option.selected {
+            background-color: var(--primary-hover);
+            color: white;
+        }
+
+        .dropdown-icon {
+            font-size: 12px;
+            color: var(--text-muted);
+            transition: transform 0.2s;
+        }
+
+        .custom-select-wrapper.active .dropdown-icon {
+            transform: rotate(180deg);
+            color: var(--primary);
+        }
+
+        /* Header / Progress bar */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+            gap: 15px;
+        }
+
+        .progress-bg {
+            flex: 1;
+            height: 16px;
+            background-color: var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--success);
+            width: 0%;
+            border-radius: 8px;
+            transition: width 0.3s ease;
+        }
+
+        .streak {
+            font-weight: 800;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .streak.active {
+            color: #ff9600;
+        }
+
+        .streak.inactive {
+            color: var(--text-muted);
+        }
+
+        /* Question Area */
+        .question-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding-bottom: 120px;
+            /* Space for footer */
+        }
+
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+
+        .passage {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 15px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Feedback Footer */
+        .feedback-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            z-index: 10;
+        }
+
+        .feedback-footer.show {
+            transform: translateY(0);
+        }
+
+        .feedback-footer.correct {
+            background-color: var(--success-light);
+            color: #2b7000;
+        }
+
+        .feedback-footer.incorrect {
+            background-color: var(--danger-light);
+            color: #a10000;
+        }
+
+        .feedback-title {
+            font-size: 20px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feedback-desc {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        /* Animations */
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20%,
+            60% {
+                transform: translateX(-5px);
+            }
+
+            40%,
+            80% {
+                transform: translateX(5px);
+            }
+        }
+
+        .shake {
+            animation: shake 0.4s;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.02);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .pulse {
+            animation: pulse 0.3s;
+        }
+
+        /* Summary Screen */
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 8px solid var(--primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .score-text {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .score-sub {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .wrong-list {
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+
+        .wrong-item {
+            background: #f9fafb;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .wrong-item-q {
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .wrong-item-a {
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        .wrong-item-w {
+            color: var(--danger);
+            text-decoration: line-through;
+            margin-right: 10px;
+        }
+
+        /* Loading Overlay */
+        #loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border-color);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <!-- Screen 1: Home -->
+        <div id="screen-home" class="screen active">
+            <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                <h1>Luyện tập tiếng Anh</h1>
+                <p>Kiểm tra kiến thức tiếng Anh của bạn. Các câu hỏi sẽ được xáo trộn ngẫu nhiên.</p>
+
+                <div style="margin-top: 30px; margin-bottom: 10px; font-weight: 700;">Chọn đề luyện tập:</div>
+                <div class="custom-select-wrapper" id="exam-select-wrapper">
+                    <div class="custom-select" onclick="toggleDropdown(event)">
+                        <span id="selected-exam-text">Đề 1</span>
+                        <span class="dropdown-icon">▼</span>
+                    </div>
+                    <div class="custom-options">
+                        <div class="custom-option selected" onclick="selectExam('de1', 'Đề 1')">Đề 1</div>
+                        <!-- Thêm các option khác ở đây -->
+                    </div>
+                </div>
+
+                <div class="stat-row" style="border: none; justify-content: center; color: var(--primary);">
+                    <span id="total-q-display">Tổng số: 0 câu hỏi</span>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="startExam(false)">Bắt đầu luyện tập</button>
+        </div>
+
+        <!-- Screen 2: Practice -->
+        <div id="screen-practice" class="screen">
+            <div class="top-bar">
+                <span id="progress-text" style="font-weight: 700; color: var(--text-muted); width: 45px;">1/50</span>
+                <div class="progress-bg">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+                <div id="streak-display" class="streak inactive">
+                    🔥 <span id="streak-count">0</span>
+                </div>
+            </div>
+
+            <div class="question-container" id="question-container">
+                <!-- Question content injected here -->
+            </div>
+
+            <!-- Feedback Footer -->
+            <div id="feedback-footer" class="feedback-footer">
+                <div id="feedback-title" class="feedback-title"></div>
+                <div id="feedback-desc" class="feedback-desc"></div>
+            </div>
+        </div>
+
+        <!-- Screen 3: Summary -->
+        <div id="screen-summary" class="screen">
+            <h2 style="margin-top: 10px;">Kết quả</h2>
+
+            <div class="score-circle">
+                <div id="score-text" class="score-text">0/0</div>
+                <div class="score-sub">Chính xác</div>
+            </div>
+
+            <p id="score-comment" style="font-weight: 700; font-size: 18px; color: var(--text-main);"></p>
+
+            <div class="stat-row">
+                <span>Tỷ lệ đúng:</span>
+                <span id="score-percent">0%</span>
+            </div>
+            <div class="stat-row">
+                <span>Thời gian hoàn thành:</span>
+                <span id="time-taken">0s</span>
+            </div>
+
+            <div class="wrong-list" id="wrong-list">
+                <!-- Wrong items injected here -->
+            </div>
+
+            <div style="margin-top: auto;">
+                <button class="btn btn-primary" onclick="startExam(true)" id="btn-retry-wrong"
+                    style="display: none; background-color: #ff9600; border-color: #ff9600;">Luyện lại câu sai</button>
+                <button class="btn" onclick="resetToHome()"
+                    style="border-color: var(--primary); color: var(--primary);">Luyện lại toàn bộ</button>
+            </div>
+        </div>
+
+        <div id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 15px; font-weight: 700;">Đang gửi kết quả...</p>
+        </div>
+
+    </div>
+
+    <script>
+        const CONFIG = {
+            SHEET_URL: "PASTE_YOUR_GOOGLE_SCRIPT_URL_HERE",
+            EXAM_TITLE: "Luyện tập tiếng Anh",
+            SHUFFLE_QUESTIONS: true,
+            AUTO_NEXT_DELAY: 1200
+        };
+
+
+        // State
+        let currentQuestions = [];
+        let currentIndex = 0;
+        let score = 0;
+        let wrongQuestions = [];
+        let streak = 0;
+        let startTime = 0;
+        let userName = "";
+        let isRetryMode = false;
+        let attemptCount = 0;
+        let isAnswering = false;
+
+        let selectedExamId = 'de1';
+        let selectedExamName = 'Đề 1';
+
+        function toggleDropdown(e) {
+            e.stopPropagation();
+            document.getElementById('exam-select-wrapper').classList.toggle('active');
+        }
+
+        function selectExam(id, name) {
+            selectedExamId = id;
+            selectedExamName = name;
+            document.getElementById('selected-exam-text').innerText = name;
+            document.getElementById('exam-select-wrapper').classList.remove('active');
+            
+            document.querySelectorAll('.custom-option').forEach(el => {
+                if (el.innerText === name) el.classList.add('selected');
+                else el.classList.remove('selected');
+            });
+        }
+
+        document.addEventListener('click', function(e) {
+            const wrapper = document.getElementById('exam-select-wrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                wrapper.classList.remove('active');
+            }
+        });
+
+        // DOM Elements
+        const screenHome = document.getElementById('screen-home');
+        const screenPractice = document.getElementById('screen-practice');
+        const screenSummary = document.getElementById('screen-summary');
+        const questionContainer = document.getElementById('question-container');
+        const feedbackFooter = document.getElementById('feedback-footer');
+
+        // Init
+        document.getElementById('total-q-display').textContent = `Sẵn sàng luyện tập!`;
+
+        function shuffleArray(array) {
+            let curId = array.length;
+            while (0 !== curId) {
+                let randId = Math.floor(Math.random() * curId);
+                curId -= 1;
+                let tmp = array[curId];
+                array[curId] = array[randId];
+                array[randId] = tmp;
+            }
+            return array;
+        }
+
+        function switchScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function startExam(retryWrongOnly = false) {
+            if (!retryWrongOnly) {
+                const scriptId = selectedExamId;
+                userName = selectedExamName;
+
+                document.getElementById('loading').style.display = 'flex';
+                document.getElementById('loading').querySelector('p').textContent = "Đang tải đề thi...";
+
+                let script = document.createElement('script');
+                script.src = `data/${scriptId}.js`;
+
+                script.onload = () => {
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('loading').querySelector('p').textContent = "Đang gửi kết quả...";
+
+                    attemptCount = 1;
+                    currentQuestions = [...window.EXAM_DATA];
+                    if (CONFIG.SHUFFLE_QUESTIONS) {
+                        shuffleArray(currentQuestions);
+                    }
+
+                    isRetryMode = false;
+                    currentIndex = 0;
+                    score = 0;
+                    wrongQuestions = [];
+                    streak = 0;
+                    isAnswering = false;
+                    startTime = Date.now();
+
+                    switchScreen('screen-practice');
+                    renderQuestion();
+                };
+
+                script.onerror = () => {
+                    document.getElementById('loading').style.display = 'none';
+                    alert(`Không tìm thấy file: data/${scriptId}.js\nVui lòng tạo file này trước khi luyện tập!`);
+                };
+
+                document.head.appendChild(script);
+
+            } else {
+                attemptCount++;
+                currentQuestions = [...wrongQuestions];
+                if (CONFIG.SHUFFLE_QUESTIONS) {
+                    shuffleArray(currentQuestions);
+                }
+
+                isRetryMode = true;
+                currentIndex = 0;
+                score = 0;
+                wrongQuestions = [];
+                streak = 0;
+                isAnswering = false;
+                startTime = Date.now();
+
+                switchScreen('screen-practice');
+                renderQuestion();
+            }
+        }
+
+        function resetToHome() {
+            switchScreen('screen-home');
+        }
+
+        function renderQuestion() {
+            isAnswering = false;
+            feedbackFooter.className = 'feedback-footer'; // reset
+
+            const q = currentQuestions[currentIndex];
+
+            // Update top bar
+            document.getElementById('progress-text').textContent = `${currentIndex + 1}/${currentQuestions.length}`;
+            document.getElementById('progress-fill').style.width = `${((currentIndex) / currentQuestions.length) * 100}%`;
+
+            const streakEl = document.getElementById('streak-display');
+            document.getElementById('streak-count').textContent = streak;
+            if (streak >= 3) {
+                streakEl.className = 'streak active pulse';
+                setTimeout(() => streakEl.classList.remove('pulse'), 300);
+            } else {
+                streakEl.className = 'streak inactive';
+            }
+
+            // Render content
+            let html = `<div class="question-text">${q.question}</div>`;
+
+            const labels = ['A', 'B', 'C', 'D'];
+            labels.forEach(key => {
+                if (q.options[key]) {
+                    html += `
+                    <button class="btn btn-option" onclick="selectAnswer('${key}', this)">
+                        <span class="option-label">${key}</span>
+                        <span class="option-text">${q.options[key]}</span>
+                    </button>
+                `;
+                }
+            });
+
+            questionContainer.innerHTML = html;
+        }
+
+        function selectAnswer(selectedKey, btnElement) {
+            if (isAnswering) return;
+            isAnswering = true;
+
+            const q = currentQuestions[currentIndex];
+            const isCorrect = selectedKey === q.answer;
+            const allButtons = questionContainer.querySelectorAll('.btn-option');
+
+            if (isCorrect) {
+                score++;
+                streak++;
+                btnElement.classList.add('correct');
+                questionContainer.classList.add('pulse');
+
+                // Show success footer
+                document.getElementById('feedback-title').innerHTML = '✓ Chính xác!';
+                document.getElementById('feedback-desc').innerHTML = q.explanation || '';
+                feedbackFooter.className = 'feedback-footer correct show';
+
+            } else {
+                streak = 0;
+                wrongQuestions.push(q);
+                btnElement.classList.add('incorrect');
+                questionContainer.classList.add('shake');
+
+                // Highlight correct answer
+                allButtons.forEach(btn => {
+                    if (btn.querySelector('.option-label').innerText === q.answer) {
+                        btn.classList.add('correct');
+                    }
+                });
+
+                // Show error footer
+                document.getElementById('feedback-title').innerHTML = '✗ Sai rồi!';
+                document.getElementById('feedback-desc').innerHTML = `Đáp án đúng: <b>${q.answer}</b>. ${q.explanation || ''}`;
+                feedbackFooter.className = 'feedback-footer incorrect show';
+            }
+
+            setTimeout(() => {
+                currentIndex++;
+                if (currentIndex < currentQuestions.length) {
+                    renderQuestion();
+                } else {
+                    finishExam();
+                }
+            }, CONFIG.AUTO_NEXT_DELAY);
+        }
+
+        function finishExam() {
+            document.getElementById('progress-fill').style.width = '100%';
+            feedbackFooter.classList.remove('show');
+
+            const timeTaken = Math.floor((Date.now() - startTime) / 1000);
+            const percent = Math.round((score / currentQuestions.length) * 100);
+
+            document.getElementById('score-text').textContent = `${score}/${currentQuestions.length}`;
+            document.getElementById('score-percent').textContent = `${percent}%`;
+
+            let mins = Math.floor(timeTaken / 60);
+            let secs = timeTaken % 60;
+            document.getElementById('time-taken').textContent = `${mins > 0 ? mins + 'm ' : ''}${secs}s`;
+
+            let comment = "";
+            if (percent === 100) comment = "Xuất sắc! 🎉";
+            else if (percent >= 80) comment = "Giỏi lắm! 🌟";
+            else if (percent >= 50) comment = "Khá tốt! 👍";
+            else comment = "Cần cố gắng hơn 💪";
+
+            document.getElementById('score-comment').textContent = comment;
+
+            // Render wrong list
+            const wrongListEl = document.getElementById('wrong-list');
+            if (wrongQuestions.length > 0) {
+                document.getElementById('btn-retry-wrong').style.display = 'flex';
+                let wrongHtml = `<div style="font-weight: 700; margin-bottom: 10px;">Các câu làm sai (${wrongQuestions.length}):</div>`;
+                wrongQuestions.forEach((q, idx) => {
+                    // Strip HTML tags for simple display
+                    let qText = q.question.replace(/<[^>]*>?/gm, '');
+                    if (qText.length > 80) qText = qText.substring(0, 80) + '...';
+
+                    wrongHtml += `
+                    <div class="wrong-item">
+                        <div class="wrong-item-q">${idx + 1}. ${qText}</div>
+                        <div>
+                            <span style="color: var(--text-muted)">Đ/A: </span>
+                            <span class="wrong-item-a">${q.answer} (${q.options[q.answer]})</span>
+                        </div>
+                    </div>
+                `;
+                });
+                wrongListEl.innerHTML = wrongHtml;
+            } else {
+                document.getElementById('btn-retry-wrong').style.display = 'none';
+                wrongListEl.innerHTML = `<div style="color: var(--success); font-weight: 700; text-align: center; padding: 20px;">Hoàn hảo! Bạn không sai câu nào.</div>`;
+            }
+
+            switchScreen('screen-summary');
+            sendDataToSheet(score, currentQuestions.length, timeTaken);
+        }
+
+        function sendDataToSheet(c_score, c_total, c_time) {
+            if (!CONFIG.SHEET_URL || CONFIG.SHEET_URL === "PASTE_YOUR_GOOGLE_SCRIPT_URL_HERE") return;
+
+            document.getElementById('loading').style.display = 'flex';
+
+            const payload = {
+                timestamp: new Date().toISOString(),
+                name: userName,
+                score: c_score,
+                total: c_total,
+                time_seconds: c_time,
+                attempt: attemptCount,
+                is_retry_mode: isRetryMode
+            };
+
+            fetch(CONFIG.SHEET_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Because Apps Script often has CORS issues, no-cors is easiest for fire-and-forget
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload)
+            }).then(() => {
+                document.getElementById('loading').style.display = 'none';
+            }).catch(err => {
+                console.error("Error sending data", err);
+                document.getElementById('loading').style.display = 'none';
+            });
+        }
+
+    </script>
+</body>
+
+</html>
