@@ -136,6 +136,14 @@
             color: var(--text-muted);
             width: 24px;
             text-align: center;
+            flex-shrink: 0;
+        }
+
+        .btn-option .option-text {
+            flex: 1;
+            word-break: break-word;
+            line-height: 1.4;
+            text-align: left;
         }
 
         .btn-option:active {
@@ -757,16 +765,20 @@
             }
 
             // Render content
-            let html = `<div class="question-text">${q.question}</div>`;
+            let html = `
+                <div class="question-text">
+                    <div style="color: var(--primary); font-weight: 800; margin-bottom: 10px; font-size: 20px;">Câu ${q.id}:</div>
+                    ${q.question}
+                </div>`;
 
             const labels = ['A', 'B', 'C', 'D'];
             labels.forEach(key => {
                 if (q.options[key]) {
                     html += `
-                    <button class="btn btn-option" onclick="selectAnswer('${key}', this)">
+                    <div class="btn btn-option" onclick="selectAnswer('${key}', this)">
                         <span class="option-label">${key}</span>
                         <span class="option-text">${q.options[key]}</span>
-                    </button>
+                    </div>
                 `;
                 }
             });
